@@ -1,0 +1,105 @@
+<!doctype html>
+<title>Parallel Coordinates</title>
+<link rel="stylesheet" type="text/css" href="../lib/d3.parcoords.css">
+<script src="../d3/d3.min.js"></script>
+<script src="../lib/d3.parcoords.js"></script>
+<script src="../lib/sylvester.js"></script>
+<script src="../lib/underscore.js"></script>
+<script src="../lib/jquery-1.7.min.js"></script>
+<script src="../lib/underscore.js"></script>
+<script src="../lib/underscore.math.js"></script>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+<div id="example-progressive" class="parcoords" style="width:1300px;margin-left:-250px;height:270px;"></div>
+<!--<pre><a href="#" class="show-code" data-code="progressive">Show code</a></pre>-->
+<!--<div class="span12">
+        <h2>Export Drawing</h2>
+
+        <br/>
+        <button class="btn btn-success" id="save_as_svg" value="">
+                Save as SVG</button>
+        <button class="btn btn-success" id="save_as_pdf" value="">
+                Save as PDF</button>
+        <button class="btn btn-success" id="save_as_png" value="">
+                Save as High-Res PNG</button>
+        <br>
+        <br>
+        SVG Code:<br>
+        <pre class="prettyprint lang-xml" id="svg_code">
+        </pre>
+</div>
+</div>
+<form id="svgform" method="post" action="http://d3export.housegordon.org/download.pl">
+ <input type="hidden" id="output_format" name="output_format" value="">
+ <input type="hidden" id="data" name="data" value="">
+</form>-->
+
+<script id="progressive">// linear color scale
+// interact with this variable from a javascript console
+var pc_progressive;
+
+// load csv file and create the chart
+d3.csv('cat_num_cp.csv', function(data) {  //cat_num_cp.csv
+  var colorgen = d3.scale.category20();
+  var colors = {};
+  _(data).chain()
+    .pluck('group')
+    .uniq()
+    .each(function(d,i) {
+      colors[d] = colorgen(i);
+    });
+
+  var color = function(d) { return colors[d.group]; };
+
+  pc_progressive = d3.parcoords()("#example-progressive")
+    .data(data)
+    .color(color)
+    .alpha(0.4)
+    .margin({ top: 24, left: 150, bottom: 12, right: 0 })
+    .mode("queue")
+    .render()
+    .brushMode("1D-axes")  // enable brushing
+    .interactive()  // command line mode
+
+  pc_progressive.svg.selectAll("text")
+    .style("font", "10px sans-serif");
+});
+
+/*
+   Utility function: populates the <FORM> with the SVG data
+   and the requested output format, and submits the form.
+*/
+//function submit_download_form(output_format)
+//{
+//	// Get the d3js SVG element
+//	//var tmp = document.getElementById("ex1");
+//	var svg = document.getElementById("example-progressive");
+//	// Extract the data as SVG text string
+//	var svg_xml = (new XMLSerializer).serializeToString(svg);
+//
+//	// Submit the <FORM> to the server.
+//	// The result will be an attachment file to download.
+//	var form = document.getElementById("svgform");
+//	form['output_format'].value = output_format;
+//	form['data'].value = svg_xml ;
+//	form.submit();
+//}
+/*
+    One-time initialization
+*/
+//$(document).ready(function() {
+//	//create_d3js_drawing();
+//
+//	// on first visit, randomize the positions & colors
+//	//randomize.click();
+//
+//	// Attached actions to the buttons
+//	//$("#show_svg_code").click(function() { show_svg_code(); });
+//
+//	$("#save_as_svg").click(function() { submit_download_form("svg"); });
+//
+//	$("#save_as_pdf").click(function() { submit_download_form("pdf"); });
+//
+//	$("#save_as_png").click(function() { submit_download_form("png"); });
+//});
+</script>
